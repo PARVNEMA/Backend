@@ -3,7 +3,7 @@ import { ApiError } from "../utils/ApiError.js";
 import { User } from "../models/user.model.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
-import { jwt } from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 
 const generateAccessAndRefreshToken = async (userId) => {
     try {
@@ -192,7 +192,7 @@ const changeCurrentPassword = asynchHandler(async (req, res) => {
     }
 
     user.password = newpass;
-    await User.save({ validateBeforSave: false });
+    await user.save({ validateBeforSave: false });
     return res
         .status(200)
         .json(new ApiResponse(200, "password changed successfully"));
@@ -266,8 +266,11 @@ const updateUserAvatar = asynchHandler(async (req, res) => {
 });
 
 const getUserChannelProfile = asynchHandler(async (req, res) => {
-    const { username } = req.Params;
-    if (!username?.trime()) {
+    const { username } = req.params || "";
+
+    console.log("username", username);
+
+    if (!username?.trim()) {
         throw new ApiError(400, "username missing");
     }
     const channel = await User.aggregate([
